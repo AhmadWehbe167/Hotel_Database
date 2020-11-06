@@ -1,0 +1,305 @@
+DROP DATABASE IF EXISTS HOTEL;
+CREATE DATABASE HOTEL;
+
+use hotel;
+
+CREATE TABLE CUSTOMER(
+ID INT NOT NULL UNIQUE,
+Name VARCHAR(20) NOT NULL,
+Gender Varchar(20) NOT NULL,
+Email VARCHAR(20) NOT NULL,
+Address VARCHAR(20) NOT NULL,
+PhoneNumber INT,
+PRIMARY KEY(ID)
+) ENGINE = InnoDb;
+
+CREATE TABLE INVOICE(
+InvoiceID INT NOT NULL,
+CustomerID INT NOT NULL,
+Description VARCHAR(20) NOT NULL,
+TotalAmount INT NOT NULL,
+PRIMARY KEY(InvoiceID),
+FOREIGN KEY(CustomerID) REFERENCES Customer(ID) 
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE FACILITIES(
+Type VARCHAR(20) NOT NULL,
+CustomerID INT NOT NULL,
+Price INT NOT NULL,
+PRIMARY KEY(Type),
+FOREIGN KEY(CustomerID)
+REFERENCES Customer(ID)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE GUESTS(
+ID INT NOT NULL,
+CustomerID INT NOT NULL,
+PhoneNumber INT NOT NULL,
+Name VARCHAR(20) NOT NULL,
+PRIMARY KEY(ID, CustomerID),
+FOREIGN KEY(CustomerID)
+REFERENCES Customer(ID)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE OWNER(
+ID INT NOT NULL,
+Name  VARCHAR(20) NOT NULL,
+Email VARCHAR(20) NOT NULL,
+Address VARCHAR(20) NOT NULL,
+PhoneNumber INT NOT NULL,
+PRIMARY KEY(ID)
+)ENGINE = InnoDb;
+
+CREATE TABLE HOTEL(
+HotelLocation VARCHAR(20) NOT NULL UNIQUE,
+HotelName VARCHAR(20) NOT NULL UNIQUE,
+Capacity INT,
+OwnerID INT NOT NULL,
+PRIMARY KEY(HotelLocation, HotelName),
+FOREIGN KEY(OwnerID)
+REFERENCES Owner(ID)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE ROOM(
+Room_Number INT NOT NULL,
+Floor INT NOT NULL,
+Room_Type VARCHAR(20) NOT NULL,
+CustomerID INT NOT NULL,
+Availability VARCHAR(20) NOT NULL,
+Hotel_Name VARCHAR(20) NOT NULL,
+Hotel_Location VARCHAR(20) NOT NULL,
+PRIMARY KEY(Room_Number),
+FOREIGN KEY(CustomerID)
+REFERENCES Customer(ID)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(Hotel_Location)
+REFERENCES HOTEL(HotelLocation)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(Hotel_Name)
+REFERENCES HOTEL(HotelName)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE RESTAURANT(
+Name VARCHAR(20) NOT NULL,
+Hotel_Name VARCHAR(20) NOT NULL,
+Hotel_Location VARCHAR(20) NOT NULL,
+Menu VARCHAR(50) NOT NULL,
+Prices VARCHAR(50) NOT NULL,
+Number_tables INT,
+Number_Chairs INT,
+PRIMARY KEY(Name, Menu),
+FOREIGN KEY(Hotel_Location)
+REFERENCES HOTEL(HotelLocation)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(Hotel_Name)
+REFERENCES HOTEL(HotelName)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE STAFF(
+ID INT NOT NULL,
+Shifts VARCHAR(20) NOT NULL,
+Name VARCHAR(20) NOT NULL,
+PhoneNumber INT NOT NULL,
+Hotel_Location VARCHAR(20) NOT NULL,
+Hotel_Name VARCHAR(20) NOT NULL,
+ManagerID INT,
+PRIMARY KEY(ID),
+FOREIGN KEY(Hotel_Location)
+REFERENCES HOTEL(HotelLocation)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(Hotel_Name)
+REFERENCES HOTEL(HotelName)
+ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(ManagerID)
+REFERENCES STAFF(ID)
+ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDb;
+
+CREATE TABLE SERVICES(
+Room_Number INT NOT NULL,
+Type VARCHAR(20) NOT NULL,
+Price INT NOT NULL,
+PRIMARY KEY(Type),
+FOREIGN KEY(Room_Number)
+REFERENCES ROOM(Room_Number)
+ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDb;
+
+insert into CUSTOMER
+(ID, Name, Gender, Email, Address, PhoneNumber)
+values
+(201907576,"Omar Kammouni","Male","omk12@mail.aub.edu","Jeb Jannine",76089035),
+(201807578,"Kassem Al Ahmad","Male","kia10@mail.aub.edu","Palestine",78842679),
+(201707577,"Mahmoud Saleh","Male","mas155@mail.aub.edu","Beirut",71567022),
+(201907063,"Ahmad Wehbe","Male","abw02@mail.aub.edu","Harouf",76507959),
+(201405997,"Dana Merhi","Female","dkm64@mail.aub.edu","Palestine",70692328);
+
+insert into INVOICE
+(InvoiceID, CustomerID, Description, TotalAmount)
+values
+(1,201907576,"paid",200),
+(2,201807578,"paid",143),
+(3,201707577,"paid",103),
+(4,201907063,"not paid",57);
+
+insert into FACILITIES
+(Type, CustomerID, Price)
+values
+("Gym",201907576,20),
+("Pool",201807578,15),
+("Restaurant",201707577,20),
+("gaming room",201907063,7);
+
+insert into GUESTS
+(ID, CustomerID, PhoneNumber, Name)
+values
+(101907576,201907576,79053147,"Ali"),
+(211807578,201807578,70374184,"Khaled"),
+(201707577,201707577,80524468,"Khalil"),
+(201907063,201907063,80641123,"Malek");
+
+
+insert into OWNER
+(ID,Name,Email,Address,PhoneNumber)
+values
+(0999755, "Kassem Ahmad","Kassem@gmail.com","Shtoura",71635917),
+(0999756, "Hamza Wehbe","Hw23@gmail.com","Beirut",71635786),
+(0999757, "Ahmad kura","Ak3@gmail.com","Jeb Jannine",78458588),
+(0999758, "Mohammad Rahal","MohR@gmail.com","Zahle",70489635);
+
+insert into HOTEL
+(HotelLocation,HotelName,Capacity,OwnerID)
+values
+("Shtoura","Park",200,0999755),
+("Beirut","Blom",350,0999756),
+("Jeb Jannine","Home Hotel",150,0999757),
+("Zahle","Sweet Home",200,0999758);
+
+
+insert into ROOM
+(Room_Number, Floor,Room_Type,CustomerID,Availability,Hotel_Name,Hotel_Location)
+values
+(101, 3,"Single",201807578,"Available","Park","Shtoura"),
+(102, 3,"Single",201807578,"Available","Park","Shtoura"),
+(103, 3,"Double",201807578,"not available","Park","Shtoura"),
+(104, 3,"Double",201807578,"not available","Park","Shtoura"),
+(105, 3,"Triple",201807578,"not available","Park","Shtoura"),
+
+(201, 3,"Single",201907576,"Available","Blom","Beirut"),
+(202, 3,"Single",201907576,"Available","Blom","Beirut"),
+(203, 3,"Double",201907576,"not available","Blom","Beirut"),
+(204, 3,"Double",201907576,"not available","Blom","Beirut"),
+(205, 3,"Triple",201907576,"not available","Blom","Beirut"),
+
+(301, 3,"Single",201907063,"Available","Home Hotel","Jeb Jannine"),
+(302, 3,"Single",201907063,"Available","Home Hotel","Jeb Jannine"),
+(303, 3,"Double",201907063,"not available","Home Hotel","Jeb Jannine"),
+(304, 3,"Double",201907063,"not available","Home Hotel","Jeb Jannine"),
+(305, 3,"Triple",201907063,"not available","Home Hotel","Jeb Jannine"),
+
+(401, 3,"Single",201707577,"Available","Sweet Home","Zahle"),
+(402, 3,"Single",201707577,"Available","Sweet Home","Zahle"),
+(403, 3,"Double",201707577,"not available","Sweet Home","Zahle"),
+(404, 3,"Double",201707577,"not available","Sweet Home","Zahle"),
+(405, 3,"Triple",201707577,"not available","Sweet Home","Zahle");
+
+insert into RESTAURANT
+(Name,Hotel_Name,Hotel_Location,Menu,Prices,Number_tables,Number_Chairs)
+values
+("Crepaway","Blom","Beirut","Breakfast, launch, dinner","5 to 20, 20 to 20, 15 to 35",20,80),
+("Chopsticks","Park","Shtoura","launch, dinner","20 to 45, 15 to 35",10,20),
+("Macdonald","Home Hotel","Jeb Jannine","launch, dinner","10 to 20, 10 to 20",20,80),
+("kfc","Sweet Home","Zahle","launch, dinner","10 to 20, 10 to 20",25,100);
+
+insert into STAFF
+(ID,Shifts,Name,PhoneNumber,Hotel_Location,Hotel_Name,ManagerID)
+values
+(7001234,"Day","Joe",76089123,"Shtoura","Park",NULL),
+(7005678,"Day","John",76035234,"Zahle","Sweet Home",7001234),
+(7009123,"Night","Michael",76083146,"Beirut","Blom",7001234),
+(7004567,"Night","Zaker",76034173,"Jeb Jannine","Home Hotel",7001234);
+
+insert into SERVICES
+(Room_Number,Type,Price)
+values
+(322,"Cleaning",20),
+(323,"Delivery",20),
+(324,"Massage",45);
+
+
+CREATE VIEW MaleCustomers AS
+SELECT Name, Gender, ID
+FROM Customer
+WHERE Gender = "Male";
+
+CREATE VIEW FemaleCustomers AS
+SELECT Name, Gender, ID 
+FROM Customer
+WHERE Gender = "Female";
+
+CREATE VIEW HotelOwner AS
+SELECT ID, Name, PhoneNumber, OwnerID, HotelName, HotelLocation
+FROM Owner INNER JOIN Hotel
+Where ID = OwnerID;
+
+CREATE VIEW StaffDayShift AS
+SELECT NAME, ID, PhoneNumber, Hotel_Location, Hotel_Name
+FROM STAFF 
+WHERE Shifts = "Day";
+
+CREATE VIEW StaffNightShift AS
+SELECT NAME, ID, PhoneNumber, Hotel_Location, Hotel_Name
+FROM STAFF 
+WHERE Shifts = "Night";
+
+CREATE VIEW UnpaidInvoices AS
+SELECT Name, CustomerID, InvoiceID, Description, TotalAmount, PhoneNumber
+FROM INVOICE INNER JOIN CUSTOMER 
+WHERE CustomerID = ID AND Description = "not paid";
+
+CREATE VIEW list_alphabatically AS
+SELECT Name, Room_Number FROM customer
+AS C INNER JOIN room AS R ON C.ID = R.CustomerID
+ORDER BY Name;
+
+CREATE VIEW branches AS
+SELECT HotelLocation,HotelName FROM hotel;
+
+CREATE VIEW RestaurantTablesNumber AS
+SELECT Name, Hotel_Name, Hotel_Location, Number_tables, Number_Chairs
+FROM RESTAURANT;
+
+CREATE VIEW Available_Rooms AS
+SELECT COUNT(Room_Number)
+FROM ROOM
+WHERE Availability = "Available"
+UNION
+SELECT Room_Number
+FROM ROOM
+WHERE Availability = "Available";
+
+CREATE VIEW Facilities_Customers AS
+SELECT Name, Type
+FROM FACILITIES INNER JOIN CUSTOMER
+WHERE CustomerID = ID;
+
+CREATE INDEX idx_gender ON CUSTOMER(Gender);
+CREATE INDEX idx_ownerid ON HOTEL(OwnerID);
+CREATE INDEX idx_shifts ON STAFF(Shifts);
+CREATE INDEX idx_description ON INVOICE(Description);
+CREATE INDEX idx_availability ON ROOM(Availability);
+CREATE INDEX idx_name ON CUSTOMER(Name);
+
+
+SELECT COUNT(Gender) AS Males FROM MaleCustomers;
+SELECT COUNT(Gender) AS Females FROM FemaleCustomers;
+SELECT * FROM HotelOwner;
+SELECT * FROM StaffDayShift;
+SELECT * FROM StaffNightShift;
+SELECT COUNT(*) AS Unpaid FROM UnpaidInvoices;
